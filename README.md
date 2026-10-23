@@ -4,6 +4,16 @@ Obsidian チームが開発したオープンソースの次世代 Mermaid レ�
 
 ---
 
+## ⚡ ワンクリックでブラウザ起動 (Quick Launch)
+
+- 🌐 **[Web 上で今すぐ Pele Note を開く (GitHub Pages)](https://ogaogamirai.github.io/pele-note/pele_editor.html)**  
+  *(※ GitHub の README 画面からでも、クリック1つでそのままブラウザ上でフル機能のエディタが起動します)*
+- 💻 **ローカル環境からワンクリック起動**:
+  - **ブラウザで直接開く**: **[`pele_editor.html`](file:///G:/マイドライブ/Tools/pele/pele_editor.html)** （相対リンク: [`pele_editor.html`](./pele_editor.html)）
+  - **バッチから既定ブラウザで起動**: **[`start_pele_note.bat`](file:///G:/マイドライブ/Tools/pele/start_pele_note.bat)** （ダブルクリックで既定ブラウザが立ち上がります）
+
+---
+
 ## 🌟 特徴 (Features)
 
 1. **ミリ秒単位のリアルタイム同期プレビュー**
