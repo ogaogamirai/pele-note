@@ -8,10 +8,10 @@
   <script>
     if (typeof window.pele === 'undefined') {
       const s = document.createElement('script');
-      s.src = 'https://unpkg.com/@obsidianmd/pele@1.6.0/dist/pele.global.js';
+      s.src = 'https://unpkg.com/pele@1.10.0/dist/pele.global.js';
       s.onload = () => {
         const b = document.getElementById('peleStatusBadge');
-        if (b) b.textContent = 'Pele v1.6 (CDN)';
+        if (b) b.textContent = 'Pele v1.10 (CDN)';
         if (typeof updatePreview === 'function') updatePreview();
       };
       document.head.appendChild(s);
@@ -1495,7 +1495,7 @@ sequenceDiagram
 
     window.addEventListener('DOMContentLoaded', () => {
       initDataDrivenControls();
-      peleStatusBadge.textContent = typeof window.pele !== 'undefined' ? 'Pele v1.6 Ready' : 'Pele Offline';
+      peleStatusBadge.textContent = typeof window.pele !== 'undefined' ? 'Pele v1.10 Ready' : 'Pele Offline';
       const saved = (() => { try { return localStorage.getItem('pele_note_draft_v1'); } catch (_) { return null; } })();
       editor.value = (!saved || saved.includes('1. アーキテクチャと推論フロー')) ? INITIAL_MD : saved;
       updatePreview();

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Pele CLI — Ultra-fast Mermaid to SVG renderer
- * (Powered by Obsidian's Pele v1.6.0)
+ * (Powered by Obsidian's Pele v1.10.0)
  *
  * Usage:
  *   node pele_cli.js input.mmd [-o output.svg]
@@ -24,7 +24,7 @@ const pele = eval(peleCode + '; pele;');
 
 function showHelp() {
   console.log(`
-Pele CLI — 超高速 Mermaid → SVG レンダラー (Pele v1.6.0)
+Pele CLI — 超高速 Mermaid → SVG レンダラー (Pele v1.10.0)
 
 使い方:
   node pele_cli.js <input.mmd> [-o output.svg]

@@ -1,3 +1,4 @@
 *.bak.html
+*.bak.js
 .DS_Store
 Thumbs.db
