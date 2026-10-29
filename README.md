@@ -1,6 +1,6 @@
 # Pele Note & Pele CLI — 超高速 Mermaid / Markdown 図解スタジオ (三家共有・公開ツール)
 
-Obsidian チームが開発したオープンソースの次世代 Mermaid レンダラー **Pele (v1.6.0)** をコアに据えた、**1ファイル完結の軽量 Markdown & 図解スタジオ (`pele_editor.html`)** および **コマンドライン SVG 変換ツール (`pele_cli.js`)** です。
+Obsidian チームが開発したオープンソースの次世代 Mermaid レンダラー **Pele (v1.10.0)** をコアに据えた、**1ファイル完結の軽量 Markdown & 図解スタジオ (`pele_editor.html`)** および **コマンドライン SVG 変換ツール (`pele_cli.js`)** です。
 
 ---
 
@@ -17,7 +17,7 @@ Obsidian チームが開発したオープンソースの次世代 Mermaid レ�
 ## 🌟 特徴 (Features)
 
 1. **ミリ秒単位のリアルタイム同期プレビュー**
-   - 非同期 DOM 計測に依存しない **Pele (v1.6.0)** エンジンにより、Markdown や Mermaid コードを入力した瞬間に **0.5〜2ms** で純粋なベクター SVG を同期描画します。
+   - 非同期 DOM 計測に依存しない **Pele (v1.10.0)** エンジンにより、Markdown や Mermaid コードを入力した瞬間に **0.5〜2ms** で純粋なベクター SVG を同期描画します。
 2. **純粋・超軽量なベクター SVG 直接出力（再利用可能）**
    - `<foreignObject>` を使わない 100% 標準の `<svg>`（`<rect>`, `<path>`, `<text>`）として出力されるため、PowerPoint、Illustrator、Figma、Web 教材、GitHub README 等へ文字化けや崩れなしでそのまま再利用できます。
 3. **直感的な「🎨 図解スタイル」ポップオーバー**
@@ -34,7 +34,7 @@ Obsidian チームが開発したオープンソースの次世代 Mermaid レ�
    - `.svg` 保存では、文書内に複数の図解がある場合に **全図解を1枚の美しい一覧シートに結合した SVG** として出力できるほか、各図解カードの `↓ 単体SVG保存` ボタンから個別の SVG としても保存できます。
 6. **オフライン＆単体オンラインのハイブリッド動作**
    - 同梱の `vendor/pele.global.js` があれば **完全オフライン（ネット未接続）** で動作します。
-   - `pele_editor.html` 1ファイルだけを単体で別の場所へコピーして開いた場合も、オンライン環境であれば自動的に CDN（`unpkg.com/@obsidianmd/pele@1.6.0`）へフォールバックして動作します。
+   - `pele_editor.html` 1ファイルだけを単体で別の場所へコピーして開いた場合も、オンライン環境であれば自動的に CDN（`unpkg.com/@obsidianmd/pele@1.10.0`）へフォールバックして動作します（**セキュリティ上、可能なら `vendor/` 同梱を推奨**）。
 
 ---
 
@@ -96,7 +96,7 @@ pele-note/
 ├── pele_cli.js           # Node.js 用 CLI 変換スクリプト
 ├── pele.ps1              # PowerShell 用 CLI ラッパー
 ├── vendor/
-│   └── pele.global.js    # Pele v1.6.0 ローカルバンドル（完全オフライン動作保証用）
+│   └── pele.global.js    # Pele v1.10.0 ローカルバンドル（完全オフライン動作保証用）
 └── README.md             # 使い方・仕様ガイド（本書）
 ```
 
@@ -104,5 +104,6 @@ pele-note/
 
 ## 📜 クレジット・ライセンス (Credits & License)
 
-- コア描画エンジンとして Obsidian チーム開発の [`@obsidianmd/pele`](https://www.npmjs.com/package/@obsidianmd/pele) (v1.6.0, MIT License) を使用しています。
+- コア描画エンジンとして Obsidian チーム開発の [`@obsidianmd/pele`](https://www.npmjs.com/package/@obsidianmd/pele) (v1.10.0, MIT License) を使用しています。
 - エディタ UI・スタイルオーバーライドエンジン・CLI ツールは MIT License の下で公開されています。
+- **セキュリティ:** 他人の `.md` を開く場合はプレビュー内リンク・SVG をサニタイズしています。Pages 等で CDN フォールバックを使うときは `vendor/pele.global.js` を同梱する運用を推奨します（詳細は `pele_editor.html` 先頭の `__PELE_NOTE__` と同版）。

@@ -3,19 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pele Note — Natural Markdown & Diagram Studio</title>
+  <title>Pele Note</title>
+  <script>
+    window.__PELE_NOTE__ = { version: '1.10.0', cdn: 'https://unpkg.com/@obsidianmd/pele@1.10.0/dist/pele.global.js' };
+  </script>
   <script src="vendor/pele.global.js"></script>
   <script>
-    if (typeof window.pele === 'undefined') {
+    (function () {
+      const cfg = window.__PELE_NOTE__;
+      if (typeof window.pele !== 'undefined') return;
       const s = document.createElement('script');
-      s.src = 'https://unpkg.com/pele@1.10.0/dist/pele.global.js';
+      s.src = cfg.cdn;
+      s.crossOrigin = 'anonymous';
+      s.referrerPolicy = 'no-referrer';
       s.onload = () => {
         const b = document.getElementById('peleStatusBadge');
-        if (b) b.textContent = 'Pele v1.10 (CDN)';
+        if (b) b.textContent = 'Pele v' + cfg.version + ' (CDN)';
         if (typeof updatePreview === 'function') updatePreview();
       };
+      s.onerror = () => { const b = document.getElementById('peleStatusBadge'); if (b) b.textContent = 'Pele 読込失敗'; };
       document.head.appendChild(s);
-    }
+    })();
   </script>
   <style>
     :root {
@@ -372,9 +380,7 @@
         <span id="charCount">0 文字 · 0 行</span>
         <span id="renderPerf">描画: 0.0 ms</span>
       </div>
-      <div class="status-right">
-        <span>補完: <code>/flow</code> <code>/seq</code> <code>/style</code> <code>/table</code> ｜ Alt+1..3: 表示切替 ｜ Alt+H: 文法 ｜ Ctrl+S: 保存</span>
-      </div>
+      <div class="status-right"><span>Alt+H 文法 · Ctrl+S 保存</span></div>
     </footer>
   </div>
 
@@ -419,7 +425,7 @@
 
     const HELP_DATA = {
       mermaid: {
-        hint: '💡 <b>クリックするとエディターへ直接挿入</b>されます。<br/>行頭で <code>/flow</code>, <code>/seq</code>, <code>/style</code> と打つと補完メニューが出ます。',
+        hint: '💡 クリックで挿入 · 行頭 <code>/flow</code> 等',
         groups: [
           { title: 'ノードの形（Flowchart）', items: [
             { title: '四角形',       code: 'A["テキスト"]', act: () => insertRaw('A["四角形ノード"]') },
@@ -450,7 +456,7 @@
         ]
       },
       markdown: {
-        hint: '💡 <b>クリックするとエディターへ挿入</b>されます。<br/>リスト（<code>- </code> や <code>1. </code>）で Enter を押すと次行を自動継続します。',
+        hint: '💡 クリックで挿入 · リスト Enter で継続',
         groups: [
           { title: '見出し・構造', items: [
             { title: '大見出し H1',   code: '# 見出し',   act: () => insertRaw('\n# 大見出し (H1)\n') },
@@ -490,52 +496,15 @@
       ['```m', SNIPPETS.flowchart.trim()]
     ]);
 
-    const INITIAL_MD = `# Pele Note — 知的な思考と図解のための軽量スタジオ
+    const INITIAL_MD = `# Pele Note
 
-文章と構造図（Mermaid / Pele）をひとつの画面で軽やかに往復するための、1枚構成のマークダウンエディタです。
-
-> **Natural & Compact**: 視線を邪魔しない温かみのある紙色と、ミリ秒単位で同期描画される **Pele** エンジンを組み合わせています。
-
----
-
-## 1. 色・太線・点線を使った推論フロー（Flowchart）
+Markdown と \`\`\`mermaid\`\`\` 図解のライブプレビュー。行頭 \`/\` で補完、🎨 で色・矢印、上部から .md / .html / .svg 保存。
 
 \`\`\`mermaid
 flowchart LR
-  A["自然言語のテキスト"] ==> B["構造抽出・YAML化"]
-  B --> C{"Z3 / ソルバー検証"}
-  C -->|SAT: 整合| D["成立モデルと緩和案"]
-  C -.->|UNSAT: 矛盾| E["最小矛盾核 (MUS)"]
-  E --> B
-
-  style A fill:#F2EFE9,stroke:#6E6A63,stroke-width:1.5px
-  style C fill:#FDF3E7,stroke:#B5651D,stroke-width:2px
-  style D fill:#E8F2EC,stroke:#2D6A4F,stroke-width:2px
-  style E fill:#FBEBEB,stroke:#C53030,stroke-width:2px
-  linkStyle 0 stroke:#2D6A4F,stroke-width:3px
-  linkStyle 3 stroke:#C53030,stroke-width:2px
+  A["メモ"] --> B["図解"]
+  style A fill:#E8F2EC,stroke:#2D6A4F
 \`\`\`
-
-## 2. 対話シーケンス（Sequence Diagram）
-
-\`\`\`mermaid
-sequenceDiagram
-  actor User as キャプテン
-  participant Editor as Pele Note
-  participant Engine as Pele Engine
-  User->>Editor: Markdown / Mermaid を入力
-  Editor->>Engine: 同期レンダリング要求
-  Engine-->>Editor: 純粋ベクター SVG (数ミリ秒)
-  Editor-->>User: プレビュー＆ファイル名指定出力
-\`\`\`
-
-## 3. 入力補完とエクスポート仕様
-
-| 機能 | 使い方 | 特徴 |
-| :--- | :--- | :--- |
-| **図解スタイル (🎨)** | サブバー右のボタン | 対象図解・ノード色・矢印色と太さを独立してワンクリック変更 |
-| **スラッシュ補完** | 行頭で \`/\` を入力 | \`/flow\`, \`/seq\`, \`/style\` などをポップアップから即展開 |
-| **名前をつけて保存** | 上部 \`↓ .md / .html / .svg\` | 保存ダイアログで保存先フォルダとファイル名を自由に指定 |
 `;
 
     // 2. DOM References & State
@@ -562,6 +531,41 @@ sequenceDiagram
 
     function escapeRegExp(str) {
       return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function isSafeHref(href) {
+      const h = String(href || '').trim();
+      if (!h) return false;
+      const lower = h.replace(/[\u0000-\u001F\s]+/g, '').toLowerCase();
+      if (/^(javascript|data|vbscript):/.test(lower)) return false;
+      return /^https?:\/\//i.test(h) || h.startsWith('#') || h.startsWith('/');
+    }
+    function hrefForHtml(href) { return isSafeHref(href) ? escapeHtml(String(href).trim()) : ''; }
+    function sanitizeSvgForDom(svgText) {
+      if (!svgText) return '';
+      let s = String(svgText).replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '');
+      s = s.replace(/\s(on[a-z]+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+      return s.replace(/(\s(?:xlink:href|href)\s*=\s*)("([^"]*)"|'([^']*)')/gi, (full, pre, _q, v1, v2) => {
+        const val = (v1 || v2 || '').trim();
+        return (val.startsWith('#') || isSafeHref(val)) ? full : pre + '""';
+      });
+    }
+    function sanitizeExportHtml(html) {
+      const tpl = document.createElement('template');
+      tpl.innerHTML = html;
+      tpl.content.querySelectorAll('script, iframe, object, embed, link, meta').forEach(n => n.remove());
+      tpl.content.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+          if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
+          if ((attr.name === 'href' || attr.name === 'src' || attr.name === 'xlink:href') && !isSafeHref(attr.value) && !String(attr.value).startsWith('#')) el.removeAttribute(attr.name);
+        });
+      });
+      tpl.content.querySelectorAll('svg').forEach(svg => {
+        const w = document.createElement('template');
+        w.innerHTML = sanitizeSvgForDom(svg.outerHTML);
+        if (w.content.firstElementChild) svg.replaceWith(w.content.firstElementChild);
+      });
+      return tpl.innerHTML;
     }
 
     function showToast(msg) {
@@ -630,7 +634,11 @@ sequenceDiagram
     function parseInline(text) {
       return escapeHtml(text)
         .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+        .replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, (_, label, url) => {
+          const href = hrefForHtml(url);
+          if (!href) return label;
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        })
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .replace(/\*([^*]+)\*/g, '<em>$1</em>')
         .replace(/~~([^~]+)~~/g, '<del>$1</del>');
@@ -736,7 +744,7 @@ sequenceDiagram
           const dt = (performance.now() - t0).toFixed(1);
           const type = (typeof window.pele.detectType === 'function' ? window.pele.detectType(clean) : null) || 'diagram';
           if (res && res.svg) {
-            const styledSvg = applySvgOverrides(res.svg, clean, index);
+            const styledSvg = sanitizeSvgForDom(applySvgOverrides(res.svg, clean, index));
             renderedDiagrams.push({ index, type, svg: styledSvg, code: clean });
             const kb = (new Blob([styledSvg]).size / 1024).toFixed(1);
             return `
@@ -1248,36 +1256,19 @@ sequenceDiagram
       const slug = getDocumentSlug();
       const clone = preview.cloneNode(true);
       clone.querySelectorAll('.pele-dl-btn').forEach(b => b.remove());
+      const bodyHtml = sanitizeExportHtml(clone.innerHTML);
 
       const standalone = `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; base-uri 'none'; form-action 'none';" />
 <title>${escapeHtml(slug)}</title>
-<style>
-  :root { --pele-bg:#FFF; --pele-fg:#282623; --pele-accent:#2D6A4F; --pele-muted:#6E6A63; --pele-surface:#F9F8F5; --pele-border:#D4CEC3; }
-  body { background:#F9F8F5; color:#282623; font-family:"Inter","Hiragino Kaku Gothic ProN","BIZ UDPGothic",sans-serif; line-height:1.78; margin:0; padding:40px 20px; }
-  .prose { max-width:760px; margin:0 auto; background:#FFF; padding:40px 48px; border-radius:10px; border:1px solid #E2DDD4; box-shadow:0 2px 10px rgba(40,38,35,0.04); }
-  h1, h2, h3 { color:#1C1B18; margin:1.4em 0 0.5em; }
-  h1 { font-size:1.65rem; border-bottom:1px solid #E2DDD4; padding-bottom:0.3em; margin-top:0; }
-  h2 { font-size:1.28rem; border-bottom:1px solid #F2EFE9; padding-bottom:0.2em; }
-  p { margin:0.75em 0; }
-  blockquote { margin:1em 0; padding:0.6em 1em; border-left:3px solid #2D6A4F; background:#F9F8F5; color:#6E6A63; }
-  code { font-family:monospace; background:#F2EFE9; padding:0.15em 0.4em; border-radius:4px; color:#8C3B1A; }
-  pre { background:#232220; color:#F4F1EA; padding:12px 15px; border-radius:6px; overflow-x:auto; }
-  pre code { background:transparent; color:inherit; }
-  table { width:100%; border-collapse:collapse; margin:1.1em 0; }
-  th, td { border:1px solid #E2DDD4; padding:7px 11px; text-align:left; }
-  th { background:#F9F8F5; }
-  .pele-card { margin:1.2em 0; border:1px solid #E2DDD4; border-radius:8px; overflow:hidden; }
-  .pele-card-bar { padding:5px 10px; background:#F2EFE9; border-bottom:1px solid #E2DDD4; font-size:11px; color:#6E6A63; font-family:monospace; }
-  .pele-card-stage { padding:16px; background:#FFF; display:flex; justify-content:center; overflow-x:auto; }
-  .pele-card-stage svg { max-width:100%; height:auto; }
-</style>
+<style>${':root{--a:#2D6A4F}body{background:#F9F8F5;color:#282623;font-family:Inter,sans-serif;line-height:1.78;margin:0;padding:40px 20px}.prose{max-width:760px;margin:0 auto;background:#FFF;padding:40px 48px;border:1px solid #E2DDD4;border-radius:10px}h1,h2,h3{color:#1C1B18}h1{font-size:1.65rem;border-bottom:1px solid #E2DDD4}p{margin:.75em 0}blockquote{border-left:3px solid var(--a);padding:.6em 1em;background:#F9F8F5;color:#6E6A63}code{background:#F2EFE9;padding:.15em .4em;border-radius:4px}pre{background:#232220;color:#F4F1EA;padding:12px;border-radius:6px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #E2DDD4;padding:7px 11px}.pele-card{margin:1.2em 0;border:1px solid #E2DDD4;border-radius:8px}.pele-card-bar{padding:5px 10px;background:#F2EFE9;font-size:11px}.pele-card-stage{padding:16px;display:flex;justify-content:center}.pele-card-stage svg{max-width:100%}'}</style>
 </head>
 <body>
-  <article class="prose">${clone.innerHTML}</article>
+  <article class="prose">${bodyHtml}</article>
 </body>
 </html>`;
       await saveFileWithDialog(slug, 'html', standalone, 'text/html;charset=utf-8', 'HTML ドキュメント');
@@ -1495,7 +1486,10 @@ sequenceDiagram
 
     window.addEventListener('DOMContentLoaded', () => {
       initDataDrivenControls();
-      peleStatusBadge.textContent = typeof window.pele !== 'undefined' ? 'Pele v1.10 Ready' : 'Pele Offline';
+      const pv = window.__PELE_NOTE__ && window.__PELE_NOTE__.version;
+      peleStatusBadge.textContent = typeof window.pele !== 'undefined'
+        ? ('Pele v' + (pv || '?') + ' Ready')
+        : 'Pele Offline';
       const saved = (() => { try { return localStorage.getItem('pele_note_draft_v1'); } catch (_) { return null; } })();
       editor.value = (!saved || saved.includes('1. アーキテクチャと推論フロー')) ? INITIAL_MD : saved;
       updatePreview();
